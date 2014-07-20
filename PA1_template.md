@@ -88,15 +88,15 @@ Strategy is to use the means of the 5-minute intervals to replace the missing va
 
 
 ```r
-newDF <- merge(DF,steps.interval,by="interval")
-newDF$steps.x[is.na(newDF$steps.x)] <- newDF$steps.y[is.na(newDF$steps.x)]
+newDF <- merge(DF,steps.interval, by="interval", suffixes=c("",".y"))
+newDF$steps[is.na(newDF$steps)] <- newDF$steps.y[is.na(newDF$steps)]
 ```
 4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
 ```r
-newSteps.date <- aggregate(steps.x ~ date, data = newDF, sum)
-ggplot(newSteps.date, aes(x=steps.x)) + xlab("No. of Steps") + ylab("Count") + 
+newSteps.date <- aggregate(steps ~ date, data = newDF, sum)
+ggplot(newSteps.date, aes(x=steps)) + xlab("No. of Steps") + ylab("Count") + 
       geom_histogram(binwidth = 1000)
 ```
 
@@ -107,6 +107,8 @@ Mean of total number of steps taken per day:
 Median of total number of steps taken per day: 
 10766.188679.
 
-Impact of imputing missing data on the estimates of the total daily number of steps seems low.
+The mean before and after imputing remains the same. The median before and after imputing has changed slightly.
+The imputing of missing data seems to have minimal effect on the estimates of the total daily number of steps.
 
 ### Are there differences in activity patterns between weekdays and weekends?
+Create a new factor variable in the dataset with two levels -- 'weekday' and 'weekend' indicating whether a given date is a weekday or weekend day.
