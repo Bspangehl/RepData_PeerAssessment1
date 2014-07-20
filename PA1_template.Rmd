@@ -6,6 +6,9 @@ date: "Saturday, July 19, 2014"
 output: html_document
 ---
 
+```{r,hide=TRUE}
+require(ggplot2)
+```
 
 ## Loading and preprocessing the data
 
