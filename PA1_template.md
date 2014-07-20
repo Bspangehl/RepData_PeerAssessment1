@@ -20,7 +20,7 @@ if (file.exists(fileZip) == F) {
   dateDownLoaded <- date()
 }
 
-df <- read.csv(unz(fileZip,"activity.csv")                
+DF <- read.csv(unz(fileZip,"activity.csv")                
                ,colClasses=c("integer","Date","integer"),na.strings="NA")
 ```
 
@@ -28,7 +28,7 @@ df <- read.csv(unz(fileZip,"activity.csv")
 ### What is mean total number of steps taken per day?
 
 ```r
-steps.date <- aggregate(steps ~ date, data = df, sum)
+steps.date <- aggregate(steps ~ date, data = DF, sum)
 ```
 
 1. Make a histogram of the total number of steps taken each day
@@ -41,8 +41,10 @@ ggplot(steps.date, aes(x=steps)) + xlab("No. of Steps") + ylab("Count") +
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
 
 2. Calculate and report the **mean** and **median** total number of steps taken per day  
-Mean of total number of steps taken per day: 1.0766 &times; 10<sup>4</sup>.  
-Median of total number of steps taken per day: 10765.
+Mean of total number of steps taken per day: 
+10766.188679.  
+Median of total number of steps taken per day: 
+10765.
 
 
 ### What is the average daily activity pattern?
@@ -50,7 +52,7 @@ Median of total number of steps taken per day: 10765.
 
 
 ```r
-steps.interval <- aggregate(steps ~ interval, data = df, mean)
+steps.interval <- aggregate(steps ~ interval, data = DF, mean)
 plot(steps.interval, type = "l", xlab("Interval"), ylab("Steps"))
 ```
 
@@ -68,6 +70,43 @@ steps.interval$interval[which.max(steps.interval$steps)]
 
 ### Imputing missing values
 
+1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
+```r
+sum(is.na(DF))
+```
+
+```
+## [1] 2304
+```
+
+2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+Strategy is to use the means of the 5-minute intervals to replace the missing values.  
+
+3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+
+```r
+newDF <- merge(DF,steps.interval,by="interval")
+newDF$steps.x[is.na(newDF$steps.x)] <- newDF$steps.y[is.na(newDF$steps.x)]
+```
+4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+
+```r
+newSteps.date <- aggregate(steps.x ~ date, data = newDF, sum)
+ggplot(newSteps.date, aes(x=steps.x)) + xlab("No. of Steps") + ylab("Count") + 
+      geom_histogram(binwidth = 1000)
+```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+
+Mean of total number of steps taken per day: 
+10766.188679.  
+Median of total number of steps taken per day: 
+10766.188679.
+
+Impact of imputing missing data on the estimates of the total daily number of steps seems low.
 
 ### Are there differences in activity patterns between weekdays and weekends?
